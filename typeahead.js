@@ -1,8 +1,20 @@
 var typeaheadController = (function() {
     var MAX_RESULTS = 5;
     var RESULT_HEIGHT = 30;
-    var words = ['apple', 'appleplay', 'airdrop', 'appstore', 'airpod', 'apple music',
-        'bay', 'bay area', 'company', 'create'
+    var words = ['apple', 'appleplay', 'airdrop', 'appstore', 'airpod', 'apple music', 'air',
+                 'bay', 'bay area', 'baby', 'banana', 'bank', 'barbecue', 'bed', 'book', 'boss',
+                 'company', 'Cappuccino', 'coffee', 'cup', 'coffee shop', 'california',
+                 'drink', 'dress', 'drum', 'drill',
+                 'fire', 'firefox', 'firefox browser', 'fox', 'free coffee', 'football',
+                 'health', 'apple health', 'health app', 'html',
+                 'javascript', 'json', 'js',
+                 'mountain view', 'McDonald\'s', 
+                 'new york city', 'nasa', 'new jersey',
+                 'san jose', 'santa clara', 'san francisco', 'seattle', 'space needle', 'spheres',
+                 'university of washington', 'uber', 'universal studio',
+                 'washington', 'washington dc', 
+                 'xcode', 
+                 'Yosemite'
     ]
     var focus = -1;
     var first = 0;
@@ -25,7 +37,7 @@ var typeaheadController = (function() {
             results.style.display = "block"
             resetBtn.style.visibility = "visible"
             // match input by word
-            var inputRegExp = new RegExp('\\b' + inputText)
+            var inputRegExp = new RegExp('\\b' + inputText, 'i')
             for (var i = 0; i < words.length; i++) {
                 var word = words[i]
                 var wordMatch = word.match(inputRegExp)
@@ -52,23 +64,31 @@ var typeaheadController = (function() {
         results.innerHTML = "";
         focus = -1;
     }
-
+    // reset input by reset button 
     resetBtn.addEventListener('click', function(e) {
         e.preventDefault()
         clearInput()
     })
-    
+    // reset input by reset button 
     resetBtn.addEventListener('keydown', function(e) {
-        e.preventDefault()
+        // ENTER, clear input
         if(e.keyCode === 13) {
+            e.preventDefault()
             clearInput()
         }
+        // esc, focus on input
+        if(e.keyCode === 27) {
+            e.preventDefault()
+            input.focus()
+        }
     })
+
     // clear input and set focus and don't show dropdown
     function clearInput() {
         input.value = ""
         input.focus()
         results.style.display = "none"
+        resetBtn.style.visibility = "hidden"
     }
     // keyboard navigation for dropdown
     results.addEventListener('keydown', function(e) {
@@ -103,6 +123,7 @@ var typeaheadController = (function() {
         }
     })
     
+    // reset input when press esc
     input.addEventListener('keydown', function(e) {
         if(e.keyCode === 27) {
             input.value = ""
@@ -110,20 +131,23 @@ var typeaheadController = (function() {
         }
     })
 
+    // hide dropdown if click outside
     document.addEventListener('click', function(e) {
         if(e.target.className !== "typeahead-result") {
             results.style.display = "none"
         }
     })
     
+    // highlight selected result when using keyboard control on dropdown
     function onDropdownKeyControl() {
-        clearSelect();
+        clearHighlight();
         if(items[focus]) {
-            items[focus].style.backgroundColor = "darkgrey"
+            items[focus].style.backgroundColor = "lightgrey"
         }
     }
     
-    function clearSelect() {
+    // clear previous highlight
+    function clearHighlight() {
         for(var i = 0; i < items.length; i++) {
             items[i].style.background = "none"
         }
